@@ -1,8 +1,7 @@
 package com.example.passwordapp.viewmodel
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
+import android.content.ClipData
+import androidx.lifecycle.*
 import com.example.passwordapp.data.password.Password
 import com.example.passwordapp.data.password.PasswordDao
 import kotlinx.coroutines.launch
@@ -10,10 +9,51 @@ import kotlinx.coroutines.launch
 /** Interacts with the database via the DAO, and provides data to the UI **/
 class PasswordViewModel(private val passwordDao: PasswordDao) : ViewModel() {
 
-    private fun insertPassword(password: Password) {
+    val allPasswords: LiveData<List<Password>> = passwordDao.getPasswords().asLiveData()
+
+    /**
+     * Add new password
+     */
+    fun addNewPassword(website: String, user: String, pass: String) {
+        val newPassword = getNewPasswordEntry(website, user, pass)
         viewModelScope.launch {
-            passwordDao.insert(password)
+            passwordDao.insert(newPassword)
         }
+    }
+
+    /**
+     * Updates password
+     */
+    fun updatePassword(id: Int, website: String, user: String, pass: String) {
+        val newPassword = getUpdatedPasswordEntry(id, website, user, pass)
+        viewModelScope.launch {
+            passwordDao.update(newPassword)
+        }
+    }
+
+    /**
+     * Delete password
+     */
+    fun deleteItem(password: Password) {
+        viewModelScope.launch {
+            passwordDao.delete(password)
+        }
+    }
+
+
+    /** Check if user has valid input **/
+    fun isEntryValid(website: String, user: String, pass: String): Boolean {
+        if (website.isBlank() || user.isBlank() || pass.isBlank()) {
+            return false
+        }
+        return true
+    }
+
+    /**
+     * Returns a Password by id
+     */
+    fun retrievePassword(id: Int): LiveData<Password> {
+        return passwordDao.getPassword(id).asLiveData()
     }
 
     private fun getNewPasswordEntry(website: String, user: String, pass: String): Password {
@@ -24,18 +64,13 @@ class PasswordViewModel(private val passwordDao: PasswordDao) : ViewModel() {
         )
     }
 
-    /** Add new password **/
-    fun addNewPassword(website: String, user: String, pass: String) {
-        val newPassword = getNewPasswordEntry(website, user, pass)
-        insertPassword(newPassword)
-    }
-
-    /** Check if user has valid input **/
-    fun isEntryValid(website: String, user: String, pass: String): Boolean {
-        if (website.isBlank() || user.isBlank() || pass.isBlank()) {
-            return false
-        }
-        return true
+    private fun getUpdatedPasswordEntry(id: Int, website: String, user: String, pass: String): Password {
+        return Password(
+            id = id,
+            websiteName = website,
+            username = user,
+            password = pass
+        )
     }
 }
 
@@ -48,5 +83,4 @@ class PasswordViewModelFactory(private val passwordDao: PasswordDao) : ViewModel
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
-
 }

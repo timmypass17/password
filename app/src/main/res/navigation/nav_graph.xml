@@ -22,6 +22,10 @@
         <action
             android:id="@+id/action_addPasswordFragment_to_passwordFragment"
             app:destination="@id/passwordListFragment" />
+        <argument
+            android:name="password_id"
+            app:argType="integer"
+            android:defaultValue="-1" />
     </fragment>
 
 </navigation>

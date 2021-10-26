@@ -19,5 +19,5 @@ interface PasswordDao {
     fun getPassword(id: Int): Flow<Password>
 
     @Query("SELECT * from password ORDER BY website ASC")
-    fun getItems(): Flow<List<Password>>
+    fun getPasswords(): Flow<List<Password>>
 }
