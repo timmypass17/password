@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.passwordapp">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name="com.example.passwordapp.data.PasswordApplication"
         android:allowBackup="true"

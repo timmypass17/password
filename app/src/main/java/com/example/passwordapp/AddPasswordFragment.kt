@@ -17,6 +17,8 @@ import com.example.passwordapp.data.password.Password
 import com.example.passwordapp.databinding.FragmentAddPasswordBinding
 import com.example.passwordapp.viewmodel.PasswordViewModel
 import com.example.passwordapp.viewmodel.PasswordViewModelFactory
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
 
 
 /**
@@ -56,7 +58,6 @@ class AddPasswordFragment : Fragment() {
             viewModel.retrievePassword(passwordId).observe(viewLifecycleOwner) { selectedPassword ->
                 password = selectedPassword
                 binding.currentPassword = selectedPassword // set data binding currentPassword
-//                binding.btnDelete.isEnabled = true
             }
         }
 
@@ -77,7 +78,7 @@ class AddPasswordFragment : Fragment() {
     }
 
     /**
-     * Add new password or Updates existing password
+     * Add new password or updates existing password
      */
     fun updatePassword() {
         checkForEmptyInput()
@@ -90,9 +91,21 @@ class AddPasswordFragment : Fragment() {
                     binding.tvUsername.text.toString(),
                     binding.tvPassword.text.toString()
                 )
+                Snackbar.make(requireView(), "Added \"${binding.tvWebsite.text.toString()}\" to my account", Snackbar.LENGTH_LONG)
+                    .setActionTextColor(resources.getColor(R.color.green_light))
+                    .setAction("Dismiss") {
+                        // Responds to click on the action
+                    }
+                    .show()
             }
             // 2. Are we updating?
             else {
+                Snackbar.make(requireView(), "Updated \"${password.websiteName}\" entry", Snackbar.LENGTH_LONG)
+                    .setActionTextColor(resources.getColor(R.color.green_light))
+                    .setAction("Dismiss") {
+                        // Responds to click on the action
+                    }
+                    .show()
                 viewModel.updatePassword(
                     passwordId,
                     binding.tvWebsite.text.toString(),
@@ -107,7 +120,7 @@ class AddPasswordFragment : Fragment() {
     }
 
     /**
-     * Apply error signs if text is empty
+     * Displays error signs if text is empty
      */
     private fun checkForEmptyInput() {
         binding.apply {
@@ -130,13 +143,34 @@ class AddPasswordFragment : Fragment() {
     }
 
     /**
-     * Delete password
+     * Delete password from room database
      */
-    fun deletePassword() {
+    private fun deletePassword() {
         if (isEntryValid()) {
             viewModel.deleteItem(password)
             findNavController().navigateUp()
         }
+    }
+
+    /**
+     * Displays an alert dialog to get the user's confirmation before deleting the item.
+     */
+    fun showConfirmationDialog() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(getString(android.R.string.dialog_alert_title))
+            .setMessage("Are you sure you want to delete?")
+            .setCancelable(false)
+            .setNegativeButton("No") { _, _ -> }
+            .setPositiveButton("Yes") { _, _ ->
+                Snackbar.make(requireView(), "Deleted \"${password.websiteName}\" entry", Snackbar.LENGTH_LONG)
+                    .setActionTextColor(resources.getColor(R.color.green_light))
+                    .setAction("Dismiss") {
+                        // Responds to click on the action
+                    }
+                    .show()
+                deletePassword()
+            }
+            .show()
     }
 
     /**
@@ -155,6 +189,25 @@ class AddPasswordFragment : Fragment() {
             binding.tvUsername.text.toString(),
             binding.tvPassword.text.toString()
         )
+    }
+
+    /**
+     * Generate random password
+     */
+    fun getRandomString(length: Int) : String {
+        return (1..length)
+            .map { getRandomChar() }
+            .joinToString("")
+    }
+
+    private fun getRandomChar(): Char {
+        val randomNum = (0..100).random()
+        return when {
+            (randomNum < 15) -> ('A'..'Z').random()
+            (randomNum < 30) -> ('a'..'z').random()
+            (randomNum < 70) -> ('0'..'9').random()
+            else -> ("~`!@ #$%^&*()_-+={[}]|\\:;\"'<,>.?/").random()
+        }
     }
 
 }

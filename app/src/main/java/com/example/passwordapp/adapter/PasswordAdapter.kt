@@ -3,11 +3,18 @@ package com.example.passwordapp.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.passwordapp.AddPasswordFragment
+import com.example.passwordapp.data.PasswordApplication
 import com.example.passwordapp.data.password.Password
 import com.example.passwordapp.databinding.ItemPasswordBinding
+import com.example.passwordapp.viewmodel.PasswordViewModel
+import com.example.passwordapp.viewmodel.PasswordViewModelFactory
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class PasswordAdapter(private val onItemClicked: (Password) -> Unit) :
     ListAdapter<Password, PasswordAdapter.PasswordViewHolder>(DiffCallback){
@@ -32,12 +39,7 @@ class PasswordAdapter(private val onItemClicked: (Password) -> Unit) :
             binding.apply {
                 tvWebsite.text = pass.websiteName
                 tvUsername.text = pass.username
-                itemView.setOnLongClickListener {
-                    Toast.makeText(itemView.context, "Deleting item", Toast.LENGTH_SHORT).show()
-                    true
-                }
             }
-
         }
     }
 
@@ -59,4 +61,5 @@ class PasswordAdapter(private val onItemClicked: (Password) -> Unit) :
             }
         }
     }
+
 }

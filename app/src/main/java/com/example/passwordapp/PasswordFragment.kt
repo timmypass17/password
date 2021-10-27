@@ -47,7 +47,7 @@ class PasswordFragment : Fragment() {
         val adapter = PasswordAdapter { password ->
             val action =
                 PasswordFragmentDirections.actionPasswordFragmentToAddPasswordFragment(
-                    title = "Edit password",
+                    title = "Edit account",
                     passwordId = password.id)
             findNavController().navigate(action)
         }
@@ -69,7 +69,7 @@ class PasswordFragment : Fragment() {
     fun goToAddPasswordFragment() {
         val action =
             PasswordFragmentDirections.actionPasswordFragmentToAddPasswordFragment(
-                title = "Add a new password"
+                title = "Add a new account"
             )
         findNavController().navigate(action)
     }

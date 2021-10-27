@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/passwordListFragment"
         android:name="com.example.passwordapp.PasswordFragment"
-        android:label="PasswordFragment"
+        android:label="My Accounts"
         tools:layout="@layout/fragment_password">
         <action
             android:id="@+id/action_passwordFragment_to_addPasswordFragment"
