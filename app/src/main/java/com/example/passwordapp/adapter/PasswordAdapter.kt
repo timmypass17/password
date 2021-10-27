@@ -1,16 +1,13 @@
 package com.example.passwordapp.adapter
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.passwordapp.R
 import com.example.passwordapp.data.password.Password
 import com.example.passwordapp.databinding.ItemPasswordBinding
-import java.util.concurrent.RecursiveAction
 
 class PasswordAdapter(private val onItemClicked: (Password) -> Unit) :
     ListAdapter<Password, PasswordAdapter.PasswordViewHolder>(DiffCallback){
@@ -21,6 +18,7 @@ class PasswordAdapter(private val onItemClicked: (Password) -> Unit) :
 
     override fun onBindViewHolder(holder: PasswordViewHolder, position: Int) {
         val password = getItem(position)
+        // Could put this inside bind()
         holder.itemView.setOnClickListener {
             onItemClicked(password)
         }
@@ -34,7 +32,12 @@ class PasswordAdapter(private val onItemClicked: (Password) -> Unit) :
             binding.apply {
                 tvWebsite.text = pass.websiteName
                 tvUsername.text = pass.username
+                itemView.setOnLongClickListener {
+                    Toast.makeText(itemView.context, "Deleting item", Toast.LENGTH_SHORT).show()
+                    true
+                }
             }
+
         }
     }
 

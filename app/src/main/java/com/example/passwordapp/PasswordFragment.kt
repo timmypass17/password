@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -17,45 +19,58 @@ import com.example.passwordapp.viewmodel.PasswordViewModelFactory
 
 class PasswordFragment : Fragment() {
 
+    /**
+     * Get view model instance
+     */
     private val viewModel: PasswordViewModel by activityViewModels {
         PasswordViewModelFactory(
             (activity?.application as PasswordApplication).database.passwordDao()
         )
     }
-    private var _binding: FragmentPasswordBinding? = null
-    private val binding get() = _binding!!
+
+    private lateinit var binding: FragmentPasswordBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        _binding = FragmentPasswordBinding.inflate(inflater, container, false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_password, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Item clicked in recyclerview
-        val adapter = PasswordAdapter{ password ->
-            val action = PasswordFragmentDirections.actionPasswordFragmentToAddPasswordFragment(password.id)
+        // Creates adapter: Item onClicked in recyclerview.
+        // Navigates to adding screen. Passes password's id and website name.
+        val adapter = PasswordAdapter { password ->
+            val action =
+                PasswordFragmentDirections.actionPasswordFragmentToAddPasswordFragment(
+                    title = "Edit password",
+                    passwordId = password.id)
             findNavController().navigate(action)
         }
+
         binding.apply {
             recyclerView.adapter = adapter
-            // Fab onClick to navigate to add password fragment
-            floatingActionButton.setOnClickListener {
-                val action = PasswordFragmentDirections.actionPasswordFragmentToAddPasswordFragment()
-                findNavController().navigate(action)
-            }
+            lifecycleOwner = viewLifecycleOwner
+            passwordFragment = this@PasswordFragment
         }
 
+        // Add observer on password data. If data changes, update adapter data
         viewModel.allPasswords.observe(viewLifecycleOwner) { passwords ->
             passwords.let {
                 adapter.submitList(passwords)
             }
         }
+    }
 
+    fun goToAddPasswordFragment() {
+        val action =
+            PasswordFragmentDirections.actionPasswordFragmentToAddPasswordFragment(
+                title = "Add a new password"
+            )
+        findNavController().navigate(action)
     }
 }

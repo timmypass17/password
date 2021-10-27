@@ -1,6 +1,5 @@
 package com.example.passwordapp.viewmodel
 
-import android.content.ClipData
 import androidx.lifecycle.*
 import com.example.passwordapp.data.password.Password
 import com.example.passwordapp.data.password.PasswordDao
@@ -56,6 +55,9 @@ class PasswordViewModel(private val passwordDao: PasswordDao) : ViewModel() {
         return passwordDao.getPassword(id).asLiveData()
     }
 
+    /**
+     * Get a new password input from user
+     */
     private fun getNewPasswordEntry(website: String, user: String, pass: String): Password {
         return Password(
             websiteName = website,
@@ -64,6 +66,9 @@ class PasswordViewModel(private val passwordDao: PasswordDao) : ViewModel() {
         )
     }
 
+    /**
+     * Get updated password input from user. Used for updating existing password
+     */
     private fun getUpdatedPasswordEntry(id: Int, website: String, user: String, pass: String): Password {
         return Password(
             id = id,
@@ -74,7 +79,9 @@ class PasswordViewModel(private val passwordDao: PasswordDao) : ViewModel() {
     }
 }
 
-/** Creates the PasswordViewModel instance **/
+/**
+ * Creates the PasswordViewModel instance 
+ */
 class PasswordViewModelFactory(private val passwordDao: PasswordDao) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(PasswordViewModel::class.java)) {
