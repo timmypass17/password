@@ -6,12 +6,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import androidx.core.net.toUri
 import androidx.core.view.isEmpty
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import coil.load
 import com.example.passwordapp.data.PasswordApplication
 import com.example.passwordapp.data.password.Password
 import com.example.passwordapp.databinding.FragmentAddPasswordBinding
@@ -58,6 +60,11 @@ class AddPasswordFragment : Fragment() {
             viewModel.retrievePassword(passwordId).observe(viewLifecycleOwner) { selectedPassword ->
                 password = selectedPassword
                 binding.currentPassword = selectedPassword // set data binding currentPassword
+
+                if (selectedPassword.imgUrl.isNotBlank()) {
+                    val imgUri = (password.imgUrl).toUri().buildUpon().scheme("https").build()
+                    binding.ivWebsiteIcon.load(imgUri)
+                }
             }
         }
 
@@ -89,8 +96,10 @@ class AddPasswordFragment : Fragment() {
                 viewModel.addNewPassword(
                     binding.tvWebsite.text.toString(),
                     binding.tvUsername.text.toString(),
-                    binding.tvPassword.text.toString()
+                    binding.tvPassword.text.toString(),
                 )
+
+
                 Snackbar.make(requireView(), "Added \"${binding.tvWebsite.text.toString()}\" to my account", Snackbar.LENGTH_LONG)
                     .setActionTextColor(resources.getColor(R.color.green_light))
                     .setAction("Dismiss") {

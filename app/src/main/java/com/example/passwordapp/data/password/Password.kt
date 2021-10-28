@@ -10,4 +10,5 @@ data class Password(
     @ColumnInfo(name = "website") val websiteName: String,
     @ColumnInfo(name = "user") val username: String,
     @ColumnInfo(name = "pass") val password: String,
+    @ColumnInfo(name = "img_url") val imgUrl: String = ""
 )

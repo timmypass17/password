@@ -3,11 +3,13 @@ package com.example.passwordapp.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.net.toUri
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import coil.load
 import com.example.passwordapp.AddPasswordFragment
 import com.example.passwordapp.data.PasswordApplication
 import com.example.passwordapp.data.password.Password
@@ -37,6 +39,10 @@ class PasswordAdapter(private val onItemClicked: (Password) -> Unit) :
 
         fun bind(pass: Password) {
             binding.apply {
+                if (pass.imgUrl.isNotBlank()) {
+                    val imgUri = (pass.imgUrl).toUri().buildUpon().scheme("https").build()
+                    ivWebsiteIcon.load(imgUri)
+                }
                 tvWebsite.text = pass.websiteName
                 tvUsername.text = pass.username
             }
