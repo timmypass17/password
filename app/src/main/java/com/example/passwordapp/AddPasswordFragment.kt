@@ -2,10 +2,9 @@ package com.example.passwordapp
 
 import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.view.inputmethod.InputMethodManager
+import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.core.view.isEmpty
 import androidx.databinding.DataBindingUtil
@@ -43,6 +42,11 @@ class AddPasswordFragment : Fragment() {
 
     private lateinit var binding: FragmentAddPasswordBinding
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -76,6 +80,21 @@ class AddPasswordFragment : Fragment() {
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_add_password, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_delete -> {
+                showConfirmationDialog()
+                return true
+            }
+
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         // Hide keyboard.
@@ -83,6 +102,7 @@ class AddPasswordFragment : Fragment() {
                 InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(requireActivity().currentFocus?.windowToken, 0)
     }
+
 
     /**
      * Add new password or updates existing password
@@ -101,7 +121,7 @@ class AddPasswordFragment : Fragment() {
 
 
                 Snackbar.make(requireView(), "Added \"${binding.tvWebsite.text.toString()}\" to my account", Snackbar.LENGTH_LONG)
-                    .setActionTextColor(resources.getColor(R.color.green_light))
+                    .setActionTextColor(resources.getColor(R.color.grey_light))
                     .setAction("Dismiss") {
                         // Responds to click on the action
                     }
@@ -110,7 +130,7 @@ class AddPasswordFragment : Fragment() {
             // 2. Are we updating?
             else {
                 Snackbar.make(requireView(), "Updated \"${password.websiteName}\" entry", Snackbar.LENGTH_LONG)
-                    .setActionTextColor(resources.getColor(R.color.green_light))
+                    .setActionTextColor(resources.getColor(R.color.grey_light))
                     .setAction("Dismiss") {
                         // Responds to click on the action
                     }
@@ -172,7 +192,7 @@ class AddPasswordFragment : Fragment() {
             .setNegativeButton("No") { _, _ -> }
             .setPositiveButton("Yes") { _, _ ->
                 Snackbar.make(requireView(), "Deleted \"${password.websiteName}\" entry", Snackbar.LENGTH_LONG)
-                    .setActionTextColor(resources.getColor(R.color.green_light))
+                    .setActionTextColor(resources.getColor(R.color.grey_light))
                     .setAction("Dismiss") {
                         // Responds to click on the action
                     }

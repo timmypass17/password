@@ -24,11 +24,11 @@ class PasswordViewModel(private val passwordDao: PasswordDao) : ViewModel() {
     /**
      * Add new password
      */
-    fun addNewPassword(website: String, user: String, pass: String) {
+    fun addNewPassword(website: String, user: String, password: String) {
         try {
             viewModelScope.launch {
                 val imgUrl = getImageUrl(website)
-                val newPassword = getNewPasswordEntry(website, user, pass, imgUrl)
+                val newPassword = getNewPasswordEntry(website, user, password, imgUrl)
                 passwordDao.insert(newPassword)
                 _status.value = IconApiStatus.DONE
             }
